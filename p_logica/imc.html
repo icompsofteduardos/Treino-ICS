@@ -1,0 +1,29 @@
+<html>
+    <meta charset="UTF-8">
+    <head>
+        <title>Calculando o IMC</title>
+    </head>
+    <body>
+        <script>
+
+                function mostrar(frase){
+                    document.write(frase);
+                }
+
+                function pular(){
+                    document.write("<br>");
+                }
+
+                function imc(peso, altura){
+                    document.write("bora calcular saporra");
+                    pular();
+                    var imcg = peso/(altura*altura);
+                    mostrar("imc é equivalente a " + imcg)
+                }
+
+                var peso = 60;
+                var altura = 1.72;
+                imc(peso, altura);
+        </script>
+    </body>
+</html>
