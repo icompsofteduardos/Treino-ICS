@@ -1,0 +1,61 @@
+body{
+    background-color: rgb(134, 43, 207);
+}
+main h1{
+    color: rgb(255, 255, 255);
+    font-size: 50px;
+    font-family: sans-serif;
+    text-align: center;
+}
+h2{
+    color: rgb(255, 255, 255);
+    font-family: sans-serif;
+    text-align: center;
+}
+p{
+    color: rgb(255, 255, 255);
+    text-align: justify;
+    text-align: center;
+    font-family: sans-serif;
+}
+img{
+    border-radius: 50%;
+    max-width: 150px;
+    max-height: 150px;
+    position: relative;
+    left: 170px;
+    top: 70px;
+
+}
+ul{
+    color: rgb(255, 255, 255);
+}
+aside{
+    background-color: white;
+    width: 500px;
+    height: 600px;
+    position: relative;
+    top: 200px;
+    left: 700px;
+}
+footer{
+    background-color: white;
+    color: rgb(134, 43, 207);
+    font-size: 18px;
+    font-family: Arial, Helvetica, Verdana, Geneva, Tahoma, sans-serif;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+button{
+    border-radius: 5%;
+    background-color: rgb(134, 43, 207);
+    font-family: Arial, Helvetica, Verdana, Geneva, Tahoma, sans-serif;
+    color: white;
+    width: 200px;
+    height: 60px;
+    position: fixed;
+    bottom: 200px;
+    left: 850px;
+}
