@@ -17,37 +17,77 @@ class NegociacaoController {
             new Mensagem(), new MensagemView($('#mensagemView')),
             'texto');    
             
-        this._ordemAtual = ''               
+        this._ordemAtual = '';
+
+        this._service = new NegociacaoService();
+
+        this._init();
     }
-    
+
+    _init(){
+
+        this._service
+            .lista()
+            .then(negociacoes =>
+                negociacoes.forEach(negociacao =>
+                    this._listaNegociacoes.adiciona(negociacao)))
+
+            .catch(erro => this._mensagem.texto = erro);
+
+
+        setInterval(() => {
+            this.importaNegociacoes();
+        }, 5000);
+    }
+
     adiciona(event) {
 
         event.preventDefault();
 
-        ConnectionFactory
-            .getConnection()
-            .then(connection => {
-
-                let negociacao = this._criaNegociacao();
-                new NegociacaoDao(connection)
-                    .adiciona(negociacao)
-                    .then(() => {
-                        this._listaNegociacoes.adiciona(negociacao);
-                        this._mensagem.texto = 'Negociação adicionada com sucesso';
-                        this._limpaFormulario();
-                    });
+        this._service
+            .cadastra(negociacao)
+            .then(mensagem => {
+                this._listaNegociacoes.adiciona(negociacao);
+                this._mensagem.texto = mensagem;
+                this._limpaFormulario();
             })
-            .catch(erro => {
-            this._mensagem.texto = erro;
-        });
+            .catch(erro => this._mensagem.texto = erro);
     }
     
     importaNegociacoes() {
-        
 
-        let service = new NegociacaoService();
-        service
+        this._service
+            .importa(this._listaNegociacoes.negociacoes)
+            .then(negociacoes => negociacoes.forEach(negociacao => {
+                this._listaNegociacoes.adiciona(negociacao);
+                this._mensagem.texto = "Negociações do período importadas"
+            }))
+            .catch(erro => this._mensagem.texto = erro);
+
+        this._service
             .obterNegociacoes()
+            .then(negociacoes =>
+                negociacoes.filter(negociacao =>
+                    !this._listaNegociacoes.negociacoes.some(negociacaoExistente =>
+                        JSON.stringify(negociacao) == JSON.stringify(negociacaoExistente)))
+                /*
+                    temos aqui um caso onde é necessário fazer um filtro para ver se
+                    os arquivos importados estão repetidos na tela. Utilizar o indexOf
+                    se faz uma solução falha, porque ele usa comparação equivalente,
+                    onde o endereço na memória apontado sempre será diferente toda vez
+                    que o indexOf fizer a passagem pelas posições da memória.
+
+                    para isso, utilizamos o JSON.stringify. Então qual o processo de funcionamento
+                    do filtro? pega a lista de negociações, aplica o filtro, que equivale a um forEach,
+                    que passa pelas posições do array. No primeiro array que for testado para ver se ele
+                    vai ou não ir para o novo array, é pedido pra lista de negociações para que ela
+                    verifique se cada item existente nela equivale a negociação que está sendo filtrada.
+                    Se ela for, a função some retorna imediatamente 'true', entrando no filtro de negociações.
+
+                    Porém, nesse caso, ele retorna verdadeiro caso a função some tenha ido até o final do array
+                    e não encontrou nada, retornando assim 'false'
+                */
+            )
             .then(negociacoes => negociacoes.forEach(negociacao => {
                 this._listaNegociacoes.adiciona(negociacao);
                 this._mensagem.texto = 'Negociações do período importadas'   
@@ -56,9 +96,14 @@ class NegociacaoController {
     }
     
     apaga() {
-        
-        this._listaNegociacoes.esvazia();
-        this._mensagem.texto = 'Negociações apagadas com sucesso';
+
+        this._service
+            .apaga()
+            .then(mensagem => {
+                   this._mensagem.texto = mensagem;
+                   this._listaNegociacoes.esvazia();
+            })
+            .catch(error => this._mensagem.text )
     }
     
     _criaNegociacao() {
